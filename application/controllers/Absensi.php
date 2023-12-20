@@ -40,39 +40,29 @@ class Absensi extends CI_Controller {
         } else {
             $check_absen = $this->Absensi_model->check_absensi_employee($employee_id, date('Y-m-d'));
             $get_employee = $this->Employee_model->get_employee_by_id($employee_id);
-            // var_dump($reason);die;
-            // date('w') == 0 || date('w') == 6
-            if (date('w') == 0 || date('w') == 6) {
+
+            if ($check_absen) {
                 $message = [
-                    'error' => 'true',
-                    'title' => 'Absen Gagal!',
-                    'desc' => 'Absensi tidak bisa dilakukan di hari sabtu / minggu.',
+                    'warning' => 'true',
+                    'title' => 'Peringatan!',
+                    'desc' => 'Anda sudah melakukan absensi.',
                     'buttontext' => 'Oke, tutup'
                 ];
             } else {
-                if ($check_absen) {
-                    $message = [
-                        'warning' => 'true',
-                        'title' => 'Peringatan!',
-                        'desc' => 'Anda sudah melakukan absensi.',
-                        'buttontext' => 'Oke, tutup'
-                    ];
-                } else {
-                    $data = [
-                        'employee_id' => $employee_id,
-                        'department_id' => $get_employee['department_id'],
-                        'date' => date('Y-m-d'),
-                        'clock_in' => date('Y-m-d H:i:s'),
-                        'presence' => $code_kehadiran,
-                    ];
-                    $message = [
-                        'success' => 'true',
-                        'title' => 'Absen berhasil!',
-                        'desc' => 'Terimakasih telah melakukan absensi.',
-                        'buttontext' => 'Oke, tutup'
-                    ];
+                $data = [
+                    'employee_id' => $employee_id,
+                    'department_id' => $get_employee['department_id'],
+                    'date' => date('Y-m-d'),
+                    'clock_in' => date('Y-m-d H:i:s'),
+                    'presence' => $code_kehadiran,
+                ];
+                $message = [
+                    'success' => 'true',
+                    'title' => 'Absen berhasil!',
+                    'desc' => 'Terimakasih telah melakukan absensi.',
+                    'buttontext' => 'Oke, tutup'
+                ];
                     $this->Absensi_model->check_in($data);
-                }
             }
             echo json_encode($message);
         }
@@ -83,63 +73,53 @@ class Absensi extends CI_Controller {
             exit('No direct script access allowed');
         } else {
             $check_absen = $this->Absensi_model->check_absensi_employee($employee_id, date('Y-m-d'));
-            if (date('w') == 0 || date('w') == 6) {
+            if ($check_absen == null) {
                 $message = [
-                    'error' => 'true',
-                    'title' => 'Absen Gagal!',
-                    'desc' => 'Absensi tidak bisa dilakukan di hari sabtu / minggu.',
+                    'warning' => 'true',
+                    'title' => 'Peringatan!',
+                    'desc' => 'Anda belum melakukan absensi.',
                     'buttontext' => 'Oke, tutup'
                 ];
             } else {
-                if ($check_absen == null) {
+                if ($check_absen['clock_out'] != null) {
                     $message = [
-                        'warning' => 'true',
+                        'error' => 'true',
                         'title' => 'Peringatan!',
-                        'desc' => 'Anda belum melakukan absensi.',
+                        'desc' => 'Anda sudah melakukan absensi keluar hari ini!',
                         'buttontext' => 'Oke, tutup'
                     ];
                 } else {
-                    if ($check_absen['clock_out'] != null) {
+                    $time_to_out = strtotime('+9 hours', strtotime($check_absen['clock_in']));
+                    if(date('d H:i') <= date('d H:i', $time_to_out) ){
+                        $diff = strtotime(date('Y-m-d H:i:s', $time_to_out)) - strtotime(date('Y-m-d H:i:s'));
+                        $jam  = floor($diff / (60 * 60));
+                        $menit= $diff - $jam * (60 * 60);
+
                         $message = [
                             'error' => 'true',
                             'title' => 'Peringatan!',
-                            'desc' => 'Anda sudah melakukan absensi keluar hari ini!',
+                            'desc' => 'Maaf anda belum bisa keluar hari ini, aturan 9 jam. Sisa waktu '. $jam . ' Jam ' .floor($menit/60). ' Menit.' ,
                             'buttontext' => 'Oke, tutup'
                         ];
                     } else {
-                        $time_to_out = strtotime('+9 hours', strtotime($check_absen['clock_in']));
-                        if(date('d H:i') <= date('d H:i', $time_to_out) ){
-                            $diff = strtotime(date('Y-m-d H:i:s', $time_to_out)) - strtotime(date('Y-m-d H:i:s'));
-                            // var_dump($diff, strtotime($check_absen['clock_in']));die;
-                            $jam  = floor($diff / (60 * 60));
-                            $menit= $diff - $jam * (60 * 60);
+                        $diff = strtotime(date('Y-m-d H:i:s')) - strtotime($check_absen['clock_in']);
+                        $jam  = floor($diff / (60 * 60));
+                        $menit= $diff - $jam * (60 * 60);
+                        $total_kerja = $jam.' Jam '.floor($menit/60).' Menit';
 
-                            $message = [
-                                'error' => 'true',
-                                'title' => 'Peringatan!',
-                                'desc' => 'Maaf anda belum bisa keluar hari ini, aturan 9 jam. Sisa waktu '. $jam . ' Jam ' .floor($menit/60). ' Menit.' ,
-                                'buttontext' => 'Oke, tutup'
-                            ];
-                        } else {
-                            $diff = strtotime(date('Y-m-d H:i:s')) - strtotime($check_absen['clock_in']);
-                            $jam  = floor($diff / (60 * 60));
-                            $menit= $diff - $jam * (60 * 60);
-                            $total_kerja = $jam.' Jam '.floor($menit/60).' Menit';
-    
-                            $message = [
-                                'success' => 'true',
-                                'title' => 'Absen berhasil!',
-                                'desc' => 'Terimakasih telah bekerja dengan maksimal, hati-hati diwaktu pulang dan semoga diberi kesehatan😊',
-                                'buttontext' => 'Oke, tutup'
-                            ];
-    
-                            $data = [
-                                'clock_out' => date('Y-m-d H:i:s'),
-                                'total_hour' => $total_kerja
-                            ];
-                            
-                            $this->Absensi_model->check_out($employee_id, $data);
-                        }
+                        $message = [
+                            'success' => 'true',
+                            'title' => 'Absen berhasil!',
+                            'desc' => 'Terimakasih telah bekerja dengan maksimal, hati-hati diwaktu pulang dan semoga diberi kesehatan😊',
+                            'buttontext' => 'Oke, tutup'
+                        ];
+
+                        $data = [
+                            'clock_out' => date('Y-m-d H:i:s'),
+                            'total_hour' => $total_kerja
+                        ];
+
+                        $this->Absensi_model->check_out($employee_id, $data);
                     }
                 }
             }
@@ -193,7 +173,6 @@ class Absensi extends CI_Controller {
                     ];
                     $this->Absensi_model->check_in($data);
                 }
-                // var_dump($check_absen);die;
             }
             echo json_encode($message);
         }
@@ -333,14 +312,13 @@ class Absensi extends CI_Controller {
                     $loop_date = $create_date;
                     $calendar  = [];
                     for ($i=1; $i <= $total_dayin_month; $i++) { 
-                        $holiday      = date('w', $loop_date) == 0 || date('w', $loop_date) == 6 ? 'libur' : 'masuk';
-                        $background   = $holiday == 'libur' ? 'bg-danger' : 'bg-primary';
+                        $holiday      = date('w', $loop_date) == 0 || date('w', $loop_date) == 6 ? 'holiday' : 'masuk';
+                        $background   = $holiday == 'holiday' ? 'bg-danger' : 'bg-primary';
                         $selected_day = date('d-m-y', $loop_date) == date('d-m-y') ? 'border-primary' : '';
                         $target       = array_filter($laporan, fn($v) => date('j', strtotime($v->date)) == $i);
-                        $status       = $loop_date < strtotime(date('y-m-d')) && $holiday != 'libur' ? 'A' : '-';
+                        $status       = $loop_date < strtotime(date('y-m-d')) && $holiday != 'holiday' ? 'A' : '-';
                         if (count($target) > 0) {
                             $target = [...$target][0]->presence;
-
                             switch ($target) {
                                 case 1:
                                     $status = 'H';
@@ -384,7 +362,6 @@ class Absensi extends CI_Controller {
                     }
                     
                     $total_days = $this->countDays(strtotime($result['date']), 'day');
-                    $total_sat_sun = $this->countDays(strtotime($result['date']), 'satsun');
                     $total_alpa = $total_days - $result['hadir'];
 
                     $message = [
@@ -392,7 +369,6 @@ class Absensi extends CI_Controller {
                         'title' => 'Berhasil!',
                         'desc' => $result,
                         'total_day' => $total_days,
-                        'total_sat_sun' => $total_sat_sun,
                         'calendar' => $calendar,
                         'total_alpa' => $total_alpa,
                         'csrfhash' => $this->security->get_csrf_hash(),

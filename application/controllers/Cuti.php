@@ -291,7 +291,7 @@ class Cuti extends CI_Controller {
                 } else { // Approve but Modified
                     
                     $this->form_validation->set_rules('start_date', 'Mulai cuti', 'trim|required|callback_select_date');
-                    $this->form_validation->set_rules('end_date', 'Berakhir cuti', 'trim|required|callback_not_matches');
+                    $this->form_validation->set_rules('end_date', 'Berakhir cuti', 'trim|required|callback_select_end_date');
 
                     if ($this->form_validation->run() == FALSE) {
                         $message = [

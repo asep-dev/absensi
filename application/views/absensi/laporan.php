@@ -137,11 +137,11 @@
                                 <div class="card-body pt-3 pb-0">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <small>Jumlah hari dalam bulan</small>
+                                            <small>Total masuk</small>
                                             <h6 class="text-xs text-primary mb-0">
-                                                Hari
+                                                Hari Libur
                                             </h6>
-                                            <div id="hari" class="mb-0 fw-bold text-dark" style="font-size:2.3rem;">-</div>
+                                            <div id="work-holiday" class="mb-0 fw-bold text-dark" style="font-size:2.3rem;">-</div>
                                         </div>
                                         <div class="col-auto">
                                             <span class="feather-icon">
@@ -157,11 +157,11 @@
                                 <div class="card-body pt-3 pb-0">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <small>Jumlah Sabtu & Minggu</small>
+                                            <small>Jumlah wajib masuk</small>
                                             <h6 class="text-xs text-primary mb-0">
-                                                Sabtu & Minggu
+                                                Hari
                                             </h6>
-                                            <div id="satsun" class="mb-0 fw-bold text-dark" style="font-size:2.3rem;">-</div>
+                                            <div id="hari" class="mb-0 fw-bold text-dark" style="font-size:2.3rem;">-</div>
                                         </div>
                                         <div class="col-auto">
                                             <span class="feather-icon">
@@ -250,7 +250,7 @@
                         $('#sakit').text(response.desc.sakit)
                         $('#hari').text(response.total_day)
                         $('#alpa').text(response.total_alpa)
-                        $('#satsun').text(response.total_sat_sun)
+                        $('#work-holiday').text(response.desc.work_on_holiday)
                         $('#csrf').val(response.csrfhash)
                         $('#presence-calendar').empty().append(response.calendar)
                     }

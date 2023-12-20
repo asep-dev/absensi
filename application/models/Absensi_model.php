@@ -63,7 +63,7 @@ class Absensi_model extends CI_Model {
     }
 
     public function get_laporan_by_month($bulan, $employee_id){
-        return $this->db->select("employee_id, DATE_FORMAT(date, '%d-%m-%Y') as date, sum(if(presence = 1,1,0)) AS hadir, sum(if(presence = 2,1,0)) AS izin , sum(if(presence = 3 OR presence = 4,1,0)) AS sakit,")
+        return $this->db->select("employee_id, DATE_FORMAT(date, '%d-%m-%Y') as date, sum(if(presence = 1,1,0)) AS hadir, sum(if(presence = 2,1,0)) AS izin , sum(if(presence = 3 OR presence = 4,1,0)) AS sakit, sum(if(DAYOFWEEK(date) = 1 OR DAYOFWEEK(date) = 7,1,0)) as work_on_holiday")
                         ->from('absensi')
                         ->where('DATE_FORMAT(date, "%m-%Y")=', $bulan)
                         ->where('employee_id', $employee_id)

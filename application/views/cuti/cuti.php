@@ -267,7 +267,7 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <p class="fs-8">Catatan baru :</p>
+                            <p class="fs-8">Catatan :</p>
                             <p class="fs-8 mb-1">- Jika ingin ambil cuti 1 hari <strong>(Tgl Mulai & Berakhir Cuti)</strong> masih di tanggal yang sama, Dan tanggal selanjutnya anda diwajibkan masuk.</p>
                             <p class="fs-8">- Untuk cuti sakit (surat) karyawan wajib upload surat keterangan dokter, upload surat bisa dilakukan kapan saja, mau itu saat pengajuan ataupun setelah sembuh, anda bisa upload surat saat pengajuan atau terdapat dibagian <strong>kolom (action)</strong> setelah anda mengajukan cuti dan cuti sakit (surat) tidak akan mengurangi sisa cuti anda.</p>
                         </div>
@@ -353,8 +353,7 @@
                         
                         <div class="col-12">
                             <p class="fs-8">Catatan :</p>
-                            <p class="fs-8">Jika cuti tgl sekarang ingin ambil cuti 1 hari berarti <strong>(tgl sekarang + tgl besok)</strong>.</p>
-                            <p class="fs-8">Dan tgl besok atau atau tgl berakhir berarti diwajibkan masuk.</p>
+                            <p class="fs-8">Jika ingin ambil cuti 1 hari <strong>(Tgl Mulai & Berakhir Cuti)</strong> masih di tanggal yang sama, Dan tanggal selanjutnya anda diwajibkan masuk.</p>
                         </div>
 
                         <div class="col-12 mt-3">
